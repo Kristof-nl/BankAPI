@@ -17,7 +17,7 @@ namespace Data
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Bank> Banks { get; set; }
         public DbSet<BankAccount> BankAccounts { get; set; }
-        public DbSet<ContactInfo> contactInfos { get; set; }
+        public DbSet<ContactInfo> AontactInfos { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
     }

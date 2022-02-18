@@ -1,13 +1,13 @@
-﻿using CrossCuttingConcerns.Generics;
+﻿using Data.DataObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data.DataObjects
+namespace Logic.DataTransferObjects.Bank
 {
-    public class Bank : IEntity
+    public class BankAdminDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
