@@ -130,9 +130,9 @@ namespace BankAPI.Controllers
         [HttpPost("AddCustomerToBank")]
         public async Task<IActionResult> AddCustomerToBank(int bankId, CustomerDto customer)
         {
-            var groupProfile = await _bankService.AddCustomerToBank(bankId, customer);
+            var customerToAdd = await _bankService.AddCustomerToBank(bankId, customer);
 
-            if (groupProfile == null)
+            if (customerToAdd == null)
             {
                 return BadRequest("Customer doesn't exist in the database.");
             }

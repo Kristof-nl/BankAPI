@@ -43,12 +43,12 @@ namespace BankAPI
             // Services
             services.AddScoped<IBankService, BankService>();
             services.AddScoped<ICustomerService, CustomerService>();
-            //services.AddScoped<IGroupService, GroupService>();
+            services.AddScoped<IBankAccountService, BankAccountService>();
 
             // Repositories
             services.AddScoped<IBankRepository, BankRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
-            //services.AddScoped<IGroupRepository, GroupRepository>();
+            services.AddScoped<IBankAccountRepository, BankAccountRepository>();
 
             // AutoMapper configuration
             services.AddAutoMapper(typeof(AutoMapperBank).Assembly);

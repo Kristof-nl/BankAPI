@@ -85,6 +85,7 @@ namespace Data.Repository
                 .Include(a => a.Address)
                 .ThenInclude(a => a.ContactInfo)
                 .Include(c => c.Customers)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == bankId)
                 .ConfigureAwait(false);
 

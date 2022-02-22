@@ -15,6 +15,6 @@ namespace Logic.DataTransferObjects.Customer
         public int AddressId { get; set; }
         public Address Address { get; set; }
         public Data.DataObjects.Bank Bank { get; set; }
-        public ICollection<BankAccount> BankAccounts { get; set; }
+        public ICollection<Data.DataObjects.BankAccount> BankAccounts { get; set; }
     }
 }

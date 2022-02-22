@@ -2,6 +2,7 @@
 using Data.DataObjects;
 using Data.Repository;
 using Logic.DataTransferObjects.Bank;
+using Logic.DataTransferObjects.BankAccount;
 using Logic.DataTransferObjects.Customer;
 using Logic.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,7 @@ namespace Logic.Services
         Task<CustomerDto> Create(CreateCustomerDto createUpdateBankDto);
         Task<CustomerDto> Update(CustomerDto updateCustomerDto);
         Task Delete(int id);
+        Task<BankAccountDto> AddAccountToCustomer(int cumstomerId, BankAccountDto bankAccountDto);
     }
 
 
@@ -92,6 +94,24 @@ namespace Logic.Services
         public async Task Delete(int id)
         {
             await _customerRepository.Delete(id);
+        }
+
+
+        public async Task<BankAccountDto> AddAccountToCustomer(int cumstomerId, BankAccountDto bankAccountDto)
+        {
+            var customerFromDb = await _customerRepository.GetById(cumstomerId).ConfigureAwait(false);
+
+            if (customerFromDb != null)
+            {
+                var accountToAdd = _mapper.Map<BankAccount>(bankAccountDto);
+
+                var bankAccountCustomer = await _customerRepository.AddAccountToCustomer(cumstomerId, accountToAdd);
+                return _mapper.Map<BankAccount, BankAccountDto>(accountToAdd);
+
+            }
+
+            return null;
+
         }
     }
 
