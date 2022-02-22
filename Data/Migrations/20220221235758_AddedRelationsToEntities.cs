@@ -3,28 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Data.Migrations
 {
-    public partial class AddEntitiesToDb : Migration
+    public partial class AddedRelationsToEntities : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Addresses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HouseNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Addresses", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "contactInfos",
+                name: "ContactInfo",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -34,7 +18,30 @@ namespace Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_contactInfos", x => x.Id);
+                    table.PrimaryKey("PK_ContactInfo", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Addresses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HouseNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ContactInfoId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Addresses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Addresses_ContactInfo_ContactInfoId",
+                        column: x => x.ContactInfoId,
+                        principalTable: "ContactInfo",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -44,8 +51,7 @@ namespace Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AddressId = table.Column<int>(type: "int", nullable: true),
-                    ContactInfoId = table.Column<int>(type: "int", nullable: true),
+                    AddressId = table.Column<int>(type: "int", nullable: false),
                     AmountOfCash = table.Column<double>(type: "float", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false)
                 },
@@ -57,13 +63,7 @@ namespace Data.Migrations
                         column: x => x.AddressId,
                         principalTable: "Addresses",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Banks_contactInfos_ContactInfoId",
-                        column: x => x.ContactInfoId,
-                        principalTable: "contactInfos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -74,8 +74,7 @@ namespace Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AddressId = table.Column<int>(type: "int", nullable: true),
-                    ContactInfoId = table.Column<int>(type: "int", nullable: true),
+                    AddressId = table.Column<int>(type: "int", nullable: false),
                     BankId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -86,17 +85,11 @@ namespace Data.Migrations
                         column: x => x.AddressId,
                         principalTable: "Addresses",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Customers_Banks_BankId",
                         column: x => x.BankId,
                         principalTable: "Banks",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Customers_contactInfos_ContactInfoId",
-                        column: x => x.ContactInfoId,
-                        principalTable: "contactInfos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -135,9 +128,9 @@ namespace Data.Migrations
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     From = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     To = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ammount = table.Column<double>(type: "float", nullable: false),
-                    ammountBefore = table.Column<double>(type: "float", nullable: false),
-                    ammountAfter = table.Column<double>(type: "float", nullable: false),
+                    Ammount = table.Column<double>(type: "float", nullable: false),
+                    AmmountBefore = table.Column<double>(type: "float", nullable: false),
+                    AammountAfter = table.Column<double>(type: "float", nullable: false),
                     BankAccountId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -152,6 +145,11 @@ namespace Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Addresses_ContactInfoId",
+                table: "Addresses",
+                column: "ContactInfoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BankAccounts_CustomerId",
                 table: "BankAccounts",
                 column: "CustomerId");
@@ -162,11 +160,6 @@ namespace Data.Migrations
                 column: "AddressId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Banks_ContactInfoId",
-                table: "Banks",
-                column: "ContactInfoId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Customers_AddressId",
                 table: "Customers",
                 column: "AddressId");
@@ -175,11 +168,6 @@ namespace Data.Migrations
                 name: "IX_Customers_BankId",
                 table: "Customers",
                 column: "BankId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Customers_ContactInfoId",
-                table: "Customers",
-                column: "ContactInfoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_BankAccountId",
@@ -205,7 +193,7 @@ namespace Data.Migrations
                 name: "Addresses");
 
             migrationBuilder.DropTable(
-                name: "contactInfos");
+                name: "ContactInfo");
         }
     }
 }

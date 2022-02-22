@@ -1,22 +1,20 @@
-﻿using CrossCuttingConcerns.Generics;
+﻿using Data.DataObjects;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data.DataObjects
+namespace Logic.DataTransferObjects.Customer
 {
-    public class Customer : IEntity
+    public class CustomerDto
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        [ForeignKey("Address")]
         public int AddressId { get; set; }
         public Address Address { get; set; }
-        public Bank Bank { get; set; }
+        public Data.DataObjects.Bank Bank { get; set; }
         public ICollection<BankAccount> BankAccounts { get; set; }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Data.DataObjects;
+using Data.Repository;
 using Logic.DataTransferObjects.Bank;
 using Logic.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +14,10 @@ namespace Logic.Services
 {
     public interface IBankService
     {
-        Task<BankAdminDto> GetById(int personId);
+        Task<BankAdminDto> GetById(int bankId);
         Task<List<BankAdminDto>> GetAll();
-        Task<BankAdminDto> Create(CreateUpdateBankDto createUpdatePersonDto);
-        Task<BankAdminDto> Update(BankAdminDto updatePersonDto);
+        Task<BankAdminDto> Create(CreateUpdateBankDto createUpdateBankDto);
+        Task<BankAdminDto> Update(BankAdminDto updateBankDto);
         Task Delete(int id);
     }
 
@@ -25,23 +27,23 @@ namespace Logic.Services
         private readonly IBankRepository _bankRepository;
         private readonly IMapper _mapper;
 
-        public PersonService(
+        public BankService(
             IBankRepository bankRepository,
-            IMapper mapper
-            )
+            IMapper mapper)
+            
         {
             _bankRepository = bankRepository;
             _mapper = mapper;
         }
 
-        public async Task<BankAdminDto> GetById(int personId)
+        public async Task<BankAdminDto> GetById(int bankId)
         {
-            var bankFromDb = await _bankRepository.GetById(personId).ConfigureAwait(false);
+            var bankFromDb = await _bankRepository.GetById(bankId).ConfigureAwait(false);
 
 
             if (bankFromDb == null)
             {
-                throw new NotFoundException("Person not found");
+                throw new NotFoundException("Bank not found");
             }
 
             return _mapper.Map<Bank, BankAdminDto>(bankFromDb);
@@ -49,11 +51,9 @@ namespace Logic.Services
 
         public async Task<List<BankAdminDto>> GetAll()
         {
-            var allPersonsFromDb = await _bankRepository
-                .GetAll()
-                .Include(p => p.Address)
-                .ToListAsync().ConfigureAwait(false);
-            return _mapper.Map<List<Bank>, List<BankAdminDto>>(allPersonsFromDb);
+            var allBanksFromDb = await _bankRepository.GetAll().ToListAsync().ConfigureAwait(false); 
+                
+            return _mapper.Map<List<Bank>, List<BankAdminDto>>(allBanksFromDb);
         }
 
 

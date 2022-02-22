@@ -10,56 +10,56 @@ using System.Threading.Tasks;
 
 namespace Data.Repository
 {
-    public interface IBankRepository
+    public interface ICustomerRepository
     {
-        IQueryable<Bank> GetAll();
+        IQueryable<Customer> GetAll();
 
-        Task<PaginatedList<Bank>> GetList(
+        Task<PaginatedList<Customer>> GetList(
             int? pageNumber,
             string sortField,
             string sortOrder,
             int? pageSize);
 
-        Task<Bank> GetById(int id);
-        Task<Bank> GetByIdWithTracking(int id);
-        Task<Bank> Create(Bank entity);
-        Task Update(Bank entity);
+        Task<Customer> GetById(int id);
+        Task<Customer> GetByIdWithTracking(int id);
+        Task<Customer> Create(Customer entity);
+        Task Update(Customer entity);
         Task Delete(int id);
         
     }
 
-    public class BankRepository : GenericRepository<Bank>, IBankRepository
+    public class CustomerRepository : GenericRepository<Customer>, ICustomerRepository
     {
         private readonly MainDbContext _mainDbContext;
 
-        public BankRepository(MainDbContext mainDbContext) : base(mainDbContext)
+        public CustomerRepository(MainDbContext mainDbContext) : base(mainDbContext)
         {
             _mainDbContext = mainDbContext;
         }
 
-        public override async Task<Bank> GetById(int id)
+        public override async Task<Customer> GetById(int id)
         {
             return await GetAll()
                 .Include(a => a.Address)
                 .ThenInclude(a => a.ContactInfo)
-                .Include(c => c.Customers)
+                .Include(c => c.BankAccounts)
                 .FirstOrDefaultAsync(x => x.Id == id)
                 .ConfigureAwait(false); 
         }
 
 
         //Create
-        public override async Task<Bank> Create(Bank entity)
+        public override async Task<Customer> Create(Customer entity)
         {
 
-            await _mainDbContext.Banks.AddAsync(entity);
+            await _mainDbContext.Customers.AddAsync(entity);
             await _mainDbContext.SaveChangesAsync();
             return entity;
         }
 
 
         //Update
-        public override async Task<Bank> Update(Bank entity)
+        public override async Task<Customer> Update(Customer entity)
         {
             _mainDbContext.Update(entity);
             await _mainDbContext.SaveChangesAsync();

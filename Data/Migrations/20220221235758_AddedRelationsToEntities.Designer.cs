@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20220218175050_AddEntitiesToDb")]
-    partial class AddEntitiesToDb
+    [Migration("20220221235758_AddedRelationsToEntities")]
+    partial class AddedRelationsToEntities
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,6 +31,9 @@ namespace Data.Migrations
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ContactInfoId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
 
@@ -42,6 +45,8 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ContactInfoId");
+
                     b.ToTable("Addresses");
                 });
 
@@ -52,14 +57,11 @@ namespace Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AddressId")
+                    b.Property<int>("AddressId")
                         .HasColumnType("int");
 
                     b.Property<double>("AmountOfCash")
                         .HasColumnType("float");
-
-                    b.Property<int?>("ContactInfoId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -70,8 +72,6 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AddressId");
-
-                    b.HasIndex("ContactInfoId");
 
                     b.ToTable("Banks");
                 });
@@ -120,7 +120,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("contactInfos");
+                    b.ToTable("ContactInfo");
                 });
 
             modelBuilder.Entity("Data.DataObjects.Customer", b =>
@@ -130,13 +130,10 @@ namespace Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AddressId")
+                    b.Property<int>("AddressId")
                         .HasColumnType("int");
 
                     b.Property<int?>("BankId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ContactInfoId")
                         .HasColumnType("int");
 
                     b.Property<string>("FirstName")
@@ -151,8 +148,6 @@ namespace Data.Migrations
 
                     b.HasIndex("BankId");
 
-                    b.HasIndex("ContactInfoId");
-
                     b.ToTable("Customers");
                 });
 
@@ -162,6 +157,15 @@ namespace Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("AammountAfter")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Ammount")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AmmountBefore")
+                        .HasColumnType("float");
 
                     b.Property<int?>("BankAccountId")
                         .HasColumnType("int");
@@ -181,15 +185,6 @@ namespace Data.Migrations
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("ammount")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ammountAfter")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ammountBefore")
-                        .HasColumnType("float");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BankAccountId");
@@ -197,19 +192,26 @@ namespace Data.Migrations
                     b.ToTable("Transactions");
                 });
 
+            modelBuilder.Entity("Data.DataObjects.Address", b =>
+                {
+                    b.HasOne("Data.DataObjects.ContactInfo", "ContactInfo")
+                        .WithMany()
+                        .HasForeignKey("ContactInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ContactInfo");
+                });
+
             modelBuilder.Entity("Data.DataObjects.Bank", b =>
                 {
                     b.HasOne("Data.DataObjects.Address", "Address")
                         .WithMany()
-                        .HasForeignKey("AddressId");
-
-                    b.HasOne("Data.DataObjects.ContactInfo", "ContactInfo")
-                        .WithMany()
-                        .HasForeignKey("ContactInfoId");
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Address");
-
-                    b.Navigation("ContactInfo");
                 });
 
             modelBuilder.Entity("Data.DataObjects.BankAccount", b =>
@@ -225,21 +227,17 @@ namespace Data.Migrations
                 {
                     b.HasOne("Data.DataObjects.Address", "Address")
                         .WithMany()
-                        .HasForeignKey("AddressId");
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Data.DataObjects.Bank", "Bank")
                         .WithMany("Customers")
                         .HasForeignKey("BankId");
 
-                    b.HasOne("Data.DataObjects.ContactInfo", "ContactInfo")
-                        .WithMany()
-                        .HasForeignKey("ContactInfoId");
-
                     b.Navigation("Address");
 
                     b.Navigation("Bank");
-
-                    b.Navigation("ContactInfo");
                 });
 
             modelBuilder.Entity("Data.DataObjects.Transaction", b =>

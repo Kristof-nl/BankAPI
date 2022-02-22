@@ -1,4 +1,7 @@
 using Data;
+using Data.Repository;
+using Logic.AutoMapper;
+using Logic.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -36,6 +39,19 @@ namespace BankAPI
             });
             var cs = Configuration.GetConnectionString("Default");
             services.AddDbContext<MainDbContext>(options => { options.UseSqlServer(cs); });
+
+            // Services
+            services.AddScoped<IBankService, BankService>();
+            services.AddScoped<ICustomerService, CustomerService>();
+            //services.AddScoped<IGroupService, GroupService>();
+
+            // Repositories
+            services.AddScoped<IBankRepository, BankRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            //services.AddScoped<IGroupRepository, GroupRepository>();
+
+            // AutoMapper configuration
+            services.AddAutoMapper(typeof(AutoMapperBank).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

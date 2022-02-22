@@ -1,4 +1,5 @@
 ﻿using Logic.DataTransferObjects.Bank;
+using Logic.DataTransferObjects.Customer;
 using Logic.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -10,12 +11,12 @@ namespace BankAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BankController : ControllerBase
+    public class CustomerController : ControllerBase
     {
-        private readonly IBankService _bankService;
-        public BankController(IBankService bankService)
+        private readonly ICustomerService _customerService;
+        public CustomerController(ICustomerService customerService)
         {
-            _bankService = bankService;
+            _customerService = customerService;
         }
 
 
@@ -25,11 +26,11 @@ namespace BankAPI.Controllers
         {
             try
             {
-                var bank = await _bankService
+                var customer = await _customerService
                     .GetById(id)
                     .ConfigureAwait(false);
 
-                return Ok(bank);
+                return Ok(customer);
             }
             catch (Exception ex)
             {
@@ -44,12 +45,12 @@ namespace BankAPI.Controllers
         {
             try
             {
-                var banks =
-                    await _bankService
+                var customers =
+                    await _customerService
                     .GetAll()
                     .ConfigureAwait(false);
 
-                return Ok(banks);
+                return Ok(customers);
             }
             catch (Exception ex)
             {
@@ -61,16 +62,16 @@ namespace BankAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("Create")]
-        public async Task<IActionResult> Create([FromBody] CreateUpdateBankDto createUpdateBankDto)
+        public async Task<IActionResult> Create([FromBody] CreateCustomerDto createUpdateBankDto)
         {
             try
             {
-                var newBank =
-                    await _bankService
+                var newCustomer =
+                    await _customerService
                         .Create(createUpdateBankDto)
                         .ConfigureAwait(false);
 
-                return Ok(newBank);
+                return Ok(newCustomer);
 
             }
             catch (Exception ex)
@@ -83,16 +84,16 @@ namespace BankAPI.Controllers
 
         [AllowAnonymous]
         [HttpPut("Update")]
-        public async Task<IActionResult> Update([FromBody] BankAdminDto updateBankDto)
+        public async Task<IActionResult> Update([FromBody] CustomerDto updateCustomerDto)
         {
             try
             {
-                var bankToUpdate = await _bankService.Update(updateBankDto).ConfigureAwait(true);
-                if (bankToUpdate != null)
+                var customerToUpdate = await _customerService.Update(updateCustomerDto).ConfigureAwait(true);
+                if (customerToUpdate != null)
                 {
-                    return Ok(bankToUpdate);
+                    return Ok(customerToUpdate);
                 }
-                return BadRequest("Bank doesn't exist in the database.");
+                return BadRequest("Customer doesn't exist in the database.");
 
             }
             catch (Exception ex)
@@ -109,13 +110,13 @@ namespace BankAPI.Controllers
         {
             try
             {
-                var bank = await _bankService.GetById(id).ConfigureAwait(false);
+                var bank = await _customerService.GetById(id).ConfigureAwait(false);
 
                 if (bank == null)
                 {
                     return BadRequest("Bank doesn't exist in the database.");
                 }
-                await _bankService.Delete(id).ConfigureAwait(true);
+                await _customerService.Delete(id).ConfigureAwait(true);
                 return Ok();
             }
             catch (Exception ex)
