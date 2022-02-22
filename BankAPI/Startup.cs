@@ -52,7 +52,14 @@ namespace BankAPI
 
             // AutoMapper configuration
             services.AddAutoMapper(typeof(AutoMapperBank).Assembly);
+
+            // AutoMapper configuration
+            services.AddControllersWithViews()
+           .AddNewtonsoftJson(options =>
+           options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
         }
+       
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

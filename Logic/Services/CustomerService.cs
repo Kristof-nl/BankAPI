@@ -52,7 +52,13 @@ namespace Logic.Services
 
         public async Task<List<CustomerDto>> GetAll()
         {
-            var allCustomersFromDb = await _customerRepository.GetAll().ToListAsync().ConfigureAwait(false); 
+            var allCustomersFromDb = await _customerRepository.GetAll()
+                .Include(b => b.Bank)
+                .Include(ba => ba.BankAccounts)
+                .Include(a => a.Address)
+                .ThenInclude(a => a.ContactInfo)
+                .ToListAsync()
+                .ConfigureAwait(false); 
                 
             return _mapper.Map<List<Customer>, List<CustomerDto>>(allCustomersFromDb);
         }

@@ -25,7 +25,9 @@ namespace Data.Repository
         Task<Bank> Create(Bank entity);
         Task Update(Bank entity);
         Task Delete(int id);
-        
+        Task<Customer> AddCustomerToBank(int bankId, Customer entity);
+            
+
     }
 
     public class BankRepository : GenericRepository<Bank>, IBankRepository
@@ -44,7 +46,7 @@ namespace Data.Repository
                 .ThenInclude(a => a.ContactInfo)
                 .Include(c => c.Customers)
                 .FirstOrDefaultAsync(x => x.Id == id)
-                .ConfigureAwait(false); 
+                .ConfigureAwait(false);
         }
 
 
@@ -75,7 +77,23 @@ namespace Data.Repository
             _mainDbContext.Banks.Remove(personToDelete);
             await _mainDbContext.SaveChangesAsync();
         }
-    }
 
-    
+        public async Task<Customer> AddCustomerToBank(int bankId, Customer entity)
+        {
+
+            var bank = await GetAll()
+                .Include(a => a.Address)
+                .ThenInclude(a => a.ContactInfo)
+                .Include(c => c.Customers)
+                .FirstOrDefaultAsync(x => x.Id == bankId)
+                .ConfigureAwait(false);
+
+            bank.Customers.Add(entity);
+            _mainDbContext.Update(bank);
+            await _mainDbContext.SaveChangesAsync();
+
+            return entity;
+        }
+
+    }
 }

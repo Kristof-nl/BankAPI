@@ -1,4 +1,5 @@
 ﻿using Logic.DataTransferObjects.Bank;
+using Logic.DataTransferObjects.Customer;
 using Logic.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -123,6 +124,19 @@ namespace BankAPI.Controllers
                 // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
             }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("AddCustomerToBank")]
+        public async Task<IActionResult> AddCustomerToBank(int bankId, CustomerDto customer)
+        {
+            var groupProfile = await _bankService.AddCustomerToBank(bankId, customer);
+
+            if (groupProfile == null)
+            {
+                return BadRequest("Customer doesn't exist in the database.");
+            }
+            return Ok("Customer was added to the bank");
         }
     }
 }
