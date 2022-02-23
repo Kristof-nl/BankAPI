@@ -16,11 +16,10 @@ namespace Logic.Services
     public interface IBankService
     {
         Task<BankAdminDto> GetById(int bankId);
-        Task<List<BankAdminDto>> GetAll();
+        Task<List<ShortBankDto>> GetAll();
         Task<BankAdminDto> Create(CreateUpdateBankDto createUpdateBankDto);
         Task<BankAdminDto> Update(BankAdminDto updateBankDto);
         Task Delete(int id);
-        //Task<CustomerDto> AddCustomerToBank(int bankId, CustomerDto entity);
     }
 
 
@@ -51,11 +50,11 @@ namespace Logic.Services
             return _mapper.Map<Bank, BankAdminDto>(bankFromDb);
         }
 
-        public async Task<List<BankAdminDto>> GetAll()
+        public async Task<List<ShortBankDto>> GetAll()
         {
             var allBanksFromDb = await _bankRepository.GetAll().ToListAsync().ConfigureAwait(false); 
                 
-            return _mapper.Map<List<Bank>, List<BankAdminDto>>(allBanksFromDb);
+            return _mapper.Map<List<Bank>, List<ShortBankDto>>(allBanksFromDb);
         }
 
 
@@ -88,25 +87,6 @@ namespace Logic.Services
         {
             await _bankRepository.Delete(id);
         }
-
-        //public async Task<CustomerDto> AddCustomerToBank(int bankId, CustomerDto customer)
-        //{
-        //    var bankFromDb = await _bankRepository.GetById(bankId).ConfigureAwait(false);
-
-        //    if (bankFromDb != null)
-        //    {
-        //        var customerToAdd = _mapper.Map<Customer>(customer);
-
-        //        var bankCustomer = await _bankRepository.AddCustomerToBank(bankId, customerToAdd);
-        //        return _mapper.Map<Customer, CustomerDto>(bankCustomer);
-
-        //    }
-
-        //    return null;
-
-        //}
-    }
-
-    
+    } 
 
 }

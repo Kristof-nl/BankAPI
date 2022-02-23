@@ -25,8 +25,6 @@ namespace Data.Repository
         Task<Customer> Create(Customer entity);
         Task Update(Customer entity);
         Task Delete(int id);
-        //Task<BankAccount> AddAccountToCustomer(int customerId, BankAccount entity);
-
 
     }
 
@@ -79,26 +77,6 @@ namespace Data.Repository
             await _mainDbContext.SaveChangesAsync();
         }
 
-        //public async Task<BankAccount> AddAccountToCustomer(int customerId, BankAccount entity)
-        //{
-
-        //    var customer = await GetAll()
-        //        .Include(c => c.BankAccounts)
-        //        .Include(a => a.Address)
-        //        .ThenInclude(c => c.ContactInfo)
-        //        .AsNoTracking()
-        //        .FirstOrDefaultAsync(x => x.Id == customerId)
-        //        .ConfigureAwait(false);
-
-
-
-
-        //    customer.BankAccounts.Add(entity);
-        //    _mainDbContext.Update(customer);
-        //    await _mainDbContext.SaveChangesAsync();
-
-        //    return entity;
-        //}
     }
 
     

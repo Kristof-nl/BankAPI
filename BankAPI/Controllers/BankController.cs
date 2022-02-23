@@ -126,18 +126,6 @@ namespace BankAPI.Controllers
             }
         }
 
-        //[AllowAnonymous]
-        //[HttpPost("AddCustomerToBank")]
-        //public async Task<IActionResult> AddCustomerToBank(int bankId, CustomerDto customer)
-        //{
-        //    var customerToAdd = await _bankService.AddCustomerToBank(bankId, customer);
-
-        //    if (customerToAdd == null)
-        //    {
-        //        return BadRequest("Customer doesn't exist in the database.");
-        //    }
-        //    return Ok("Customer was added to the bank");
-        //}
     }
 }
 

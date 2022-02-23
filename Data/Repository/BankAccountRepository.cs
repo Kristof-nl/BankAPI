@@ -26,6 +26,7 @@ namespace Data.Repository
         Task Update(BankAccount entity);
         Task Delete(int id);
         Task<Customer> AddCustomerToAccount(int accountId, Customer entity);
+        Task<IQueryable<BankAccount>> GetAllWithExtraFields();
 
 
 
@@ -49,6 +50,12 @@ namespace Data.Repository
                 .FirstOrDefaultAsync(x => x.Id == id)
                 .ConfigureAwait(false);
         }
+
+        public async Task <IQueryable<BankAccount>> GetAllWithExtraFields()
+        {
+            return _mainDbContext.BankAccounts.Include(c => c.Customer).Include(b => b.Bank).AsNoTracking();
+        }
+
 
 
         //Create

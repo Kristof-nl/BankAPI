@@ -17,7 +17,7 @@ namespace Logic.Services
     public interface IBankAccountService
     {
         Task<BankAccountDto> GetById(int bankId);
-        Task<List<BankAccountDto>> GetAll();
+        Task<List<ShortBankAccountDto>> GetAll();
         Task<BankAccountDto> Create(int bankId, CreateBankAccountDto createUpdateBankDto);
         Task<BankAccountDto> Update(BankAccountDto updateBankAccountDto);
         Task Delete(int id);
@@ -52,11 +52,11 @@ namespace Logic.Services
             return _mapper.Map<BankAccount, BankAccountDto>(bankAccountFromDb);
         }
 
-        public async Task<List<BankAccountDto>> GetAll()
+        public async Task<List<ShortBankAccountDto>> GetAll()
         {
-            var allBankAccountsFromDb = await _bankAccountRepository.GetAll().ToListAsync().ConfigureAwait(false);
+            var allBankAccountsFromDb = await _bankAccountRepository.GetAllWithExtraFields().ConfigureAwait(false);
 
-            return _mapper.Map<List<BankAccount>, List<BankAccountDto>>(allBankAccountsFromDb);
+            return _mapper.Map<List<ShortBankAccountDto>>(allBankAccountsFromDb);
         }
 
 

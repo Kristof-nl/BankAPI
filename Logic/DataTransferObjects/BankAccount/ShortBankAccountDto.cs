@@ -14,5 +14,7 @@ namespace Logic.DataTransferObjects.BankAccount
         public int Id { get; set; }
         public string Type { get; set; }
         public string AccountNumber { get; set; }
+        public ShortBankDto Bank { get; set; }
+        public ShortCustomerDto Customer { get; set; }
     }
 }
