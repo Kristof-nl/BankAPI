@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Data.Migrations
 {
-    public partial class AddedRelationsToEntities : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -101,14 +101,21 @@ namespace Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AccountNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Owner = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AccountBalance = table.Column<double>(type: "float", nullable: false),
-                    CustomerId = table.Column<int>(type: "int", nullable: true)
+                    CustomerId = table.Column<int>(type: "int", nullable: true),
+                    BankId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BankAccounts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BankAccounts_Banks_BankId",
+                        column: x => x.BankId,
+                        principalTable: "Banks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_BankAccounts_Customers_CustomerId",
                         column: x => x.CustomerId,
@@ -148,6 +155,11 @@ namespace Data.Migrations
                 name: "IX_Addresses_ContactInfoId",
                 table: "Addresses",
                 column: "ContactInfoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BankAccounts_BankId",
+                table: "BankAccounts",
+                column: "BankId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BankAccounts_CustomerId",

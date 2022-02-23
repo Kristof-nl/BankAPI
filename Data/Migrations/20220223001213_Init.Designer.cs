@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20220222153315_AddAccountNumberProperty")]
-    partial class AddAccountNumberProperty
+    [Migration("20220223001213_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -89,6 +89,9 @@ namespace Data.Migrations
                     b.Property<string>("AccountNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("BankId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
@@ -99,6 +102,8 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BankId");
 
                     b.HasIndex("CustomerId");
 
@@ -216,9 +221,15 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.DataObjects.BankAccount", b =>
                 {
+                    b.HasOne("Data.DataObjects.Bank", "Bank")
+                        .WithMany()
+                        .HasForeignKey("BankId");
+
                     b.HasOne("Data.DataObjects.Customer", "Customer")
                         .WithMany("BankAccounts")
                         .HasForeignKey("CustomerId");
+
+                    b.Navigation("Bank");
 
                     b.Navigation("Customer");
                 });

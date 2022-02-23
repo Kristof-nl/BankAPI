@@ -22,10 +22,12 @@ namespace Data.Repository
 
         Task<BankAccount> GetById(int id);
         Task<BankAccount> GetByIdWithTracking(int id);
-        Task<BankAccount> Create(BankAccount entity);
+        Task<BankAccount> Create(int bankId, BankAccount entity);
         Task Update(BankAccount entity);
         Task Delete(int id);
-            
+        Task<Customer> AddCustomerToAccount(int accountId, Customer entity);
+
+
 
     }
 
@@ -42,6 +44,7 @@ namespace Data.Repository
         {
             return await GetAll()
                 .Include(c => c.Customer)
+                .Include(b => b.Bank)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id)
                 .ConfigureAwait(false);
@@ -49,7 +52,7 @@ namespace Data.Repository
 
 
         //Create
-        public override async Task<BankAccount> Create(BankAccount entity)
+        public async Task<BankAccount> Create(int bankId, BankAccount entity)
         {
             Random rnd = new();
             int first = rnd.Next(0000, 9999);
@@ -57,6 +60,12 @@ namespace Data.Repository
             int third = rnd.Next(0000, 9999);
 
             entity.AccountNumber = $"0012 {first} 1678 {second} 8764 {third}";
+
+            var bank = await _mainDbContext.Banks
+                .FirstOrDefaultAsync(x => x.Id == bankId)
+                .ConfigureAwait(false);
+
+            entity.Bank = bank;
 
             await _mainDbContext.BankAccounts.AddAsync(entity);
             await _mainDbContext.SaveChangesAsync();
@@ -82,5 +91,23 @@ namespace Data.Repository
             await _mainDbContext.SaveChangesAsync();
         }
 
+        public async Task<Customer> AddCustomerToAccount(int accountId, Customer entity)
+        {
+
+            var bankAccount = await GetAll()
+                .Include(x => x.Customer)
+                .Include(b => b.Bank)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == accountId)
+                .ConfigureAwait(false);
+            
+            entity.Bank = bankAccount.Bank;
+            bankAccount.Customer = entity;
+            _mainDbContext.Update(bankAccount);
+            await _mainDbContext.SaveChangesAsync();
+            
+            return entity;
+
+        }
     }
 }

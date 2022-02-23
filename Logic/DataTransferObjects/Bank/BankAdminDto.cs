@@ -1,4 +1,5 @@
 ﻿using Data.DataObjects;
+using Logic.DataTransferObjects.Customer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,6 @@ namespace Logic.DataTransferObjects.Bank
         public Address Address { get; set; }
         public double AmountOfCash { get; set; }
         public int Rating { get; set; }
-        public ICollection<Data.DataObjects.Customer> Customers { get; set; }
+        public ICollection<ShortCustomerDto> Customers { get; set; }
     }
 }

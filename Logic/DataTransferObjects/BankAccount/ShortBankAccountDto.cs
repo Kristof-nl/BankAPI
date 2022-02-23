@@ -9,15 +9,10 @@ using System.Threading.Tasks;
 
 namespace Logic.DataTransferObjects.BankAccount
 {
-    public class BankAccountDto
+    public class ShortBankAccountDto
     {
         public int Id { get; set; }
         public string Type { get; set; }
         public string AccountNumber { get; set; }
-        public DateTime CreationDate { get; set; }
-        public double AccountBalance { get; set; }
-        public ShortBankDto Bank { get; set; }
-        public ShortCustomerDto Customer { get; set; }
-        public ICollection<Transaction> Transactions { get; set; }
     }
 }

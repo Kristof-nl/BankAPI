@@ -16,12 +16,12 @@ namespace Logic.Services
 {
     public interface ICustomerService
     {
-        Task<CustomerDto> GetById(int bankId);
+        Task<CustomerDto> GetById(int customerId);
         Task<List<CustomerDto>> GetAll();
         Task<CustomerDto> Create(CreateCustomerDto createUpdateBankDto);
         Task<CustomerDto> Update(CustomerDto updateCustomerDto);
         Task Delete(int id);
-        Task<BankAccountDto> AddAccountToCustomer(int cumstomerId, BankAccountDto bankAccountDto);
+        //Task<BankAccountDto> AddAccountToCustomer(int cumstomerId, BankAccountDto bankAccountDto);
     }
 
 
@@ -39,9 +39,9 @@ namespace Logic.Services
             _mapper = mapper;
         }
 
-        public async Task<CustomerDto> GetById(int bankId)
+        public async Task<CustomerDto> GetById(int customerId)
         {
-            var customerFromDb = await _customerRepository.GetById(bankId).ConfigureAwait(false);
+            var customerFromDb = await _customerRepository.GetById(customerId).ConfigureAwait(false);
 
 
             if (customerFromDb == null)
@@ -97,22 +97,22 @@ namespace Logic.Services
         }
 
 
-        public async Task<BankAccountDto> AddAccountToCustomer(int cumstomerId, BankAccountDto bankAccountDto)
-        {
-            var customerFromDb = await _customerRepository.GetById(cumstomerId).ConfigureAwait(false);
+        //public async Task<BankAccountDto> AddAccountToCustomer(int cumstomerId, BankAccountDto bankAccountDto)
+        //{
+        //    var customerFromDb = await _customerRepository.GetById(cumstomerId).ConfigureAwait(false);
 
-            if (customerFromDb != null)
-            {
-                var accountToAdd = _mapper.Map<BankAccount>(bankAccountDto);
+        //    if (customerFromDb != null)
+        //    {
+        //        var accountToAdd = _mapper.Map<BankAccount>(bankAccountDto);
 
-                var bankAccountCustomer = await _customerRepository.AddAccountToCustomer(cumstomerId, accountToAdd);
-                return _mapper.Map<BankAccount, BankAccountDto>(accountToAdd);
+        //        var bankAccountCustomer = await _customerRepository.AddAccountToCustomer(cumstomerId, accountToAdd);
+        //        return _mapper.Map<BankAccount, BankAccountDto>(accountToAdd);
 
-            }
+        //    }
 
-            return null;
+        //    return null;
 
-        }
+        //}
     }
 
     

@@ -14,8 +14,8 @@ namespace Data.DataObjects
         public string AccountNumber { get; set; }
         public DateTime CreationDate { get; set; }
         public double AccountBalance { get; set; }
-
         public Customer Customer { get; set; }
         public ICollection<Transaction> Transactions { get; set; }
+        public Bank Bank { get; set; }
     }
 }

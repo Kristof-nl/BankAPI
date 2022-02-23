@@ -111,14 +111,14 @@ namespace BankAPI.Controllers
         {
             try
             {
-                var bank = await _customerService.GetById(id).ConfigureAwait(false);
+                var customer = await _customerService.GetById(id).ConfigureAwait(false);
 
-                if (bank == null)
+                if (customer == null)
                 {
-                    return BadRequest("Bank doesn't exist in the database.");
+                    return BadRequest("Customer doesn't exist in the database.");
                 }
                 await _customerService.Delete(id).ConfigureAwait(true);
-                return Ok();
+                return Ok("Customer has been deleted");
             }
             catch (Exception ex)
             {
@@ -128,18 +128,18 @@ namespace BankAPI.Controllers
         }
 
         
-        [AllowAnonymous]
-        [HttpPost("AddAddountToCustomer")]
-        public async Task<IActionResult> AddAccountToCustomer(int customerId, BankAccountDto bankAccountDto)
-        {
-            var accountToAdd = await _customerService.AddAccountToCustomer(customerId, bankAccountDto);
+        //[AllowAnonymous]
+        //[HttpPost("AddAccountToCustomer")]
+        //public async Task<IActionResult> AddAccountToCustomer(int customerId, BankAccountDto bankAccountDto)
+        //{
+        //    var accountToAdd = await _customerService.AddAccountToCustomer(customerId, bankAccountDto);
 
-            if (accountToAdd == null)
-            {
-                return BadRequest("Bank account doesn't exist in the database.");
-            }
-            return Ok("Customer was added to the bank account");
-        }
+        //    if (accountToAdd == null)
+        //    {
+        //        return BadRequest("Bank account doesn't exist in the database.");
+        //    }
+        //    return Ok("Customer was added to the bank account");
+        //}
     }
 }
 

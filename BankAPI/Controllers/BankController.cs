@@ -117,7 +117,7 @@ namespace BankAPI.Controllers
                     return BadRequest("Bank doesn't exist in the database.");
                 }
                 await _bankService.Delete(id).ConfigureAwait(true);
-                return Ok();
+                return Ok("Bank has been deleted");
             }
             catch (Exception ex)
             {
@@ -126,18 +126,18 @@ namespace BankAPI.Controllers
             }
         }
 
-        [AllowAnonymous]
-        [HttpPost("AddCustomerToBank")]
-        public async Task<IActionResult> AddCustomerToBank(int bankId, CustomerDto customer)
-        {
-            var customerToAdd = await _bankService.AddCustomerToBank(bankId, customer);
+        //[AllowAnonymous]
+        //[HttpPost("AddCustomerToBank")]
+        //public async Task<IActionResult> AddCustomerToBank(int bankId, CustomerDto customer)
+        //{
+        //    var customerToAdd = await _bankService.AddCustomerToBank(bankId, customer);
 
-            if (customerToAdd == null)
-            {
-                return BadRequest("Customer doesn't exist in the database.");
-            }
-            return Ok("Customer was added to the bank");
-        }
+        //    if (customerToAdd == null)
+        //    {
+        //        return BadRequest("Customer doesn't exist in the database.");
+        //    }
+        //    return Ok("Customer was added to the bank");
+        //}
     }
 }
 

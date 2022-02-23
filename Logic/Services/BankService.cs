@@ -20,7 +20,7 @@ namespace Logic.Services
         Task<BankAdminDto> Create(CreateUpdateBankDto createUpdateBankDto);
         Task<BankAdminDto> Update(BankAdminDto updateBankDto);
         Task Delete(int id);
-        Task<CustomerDto> AddCustomerToBank(int bankId, CustomerDto entity);
+        //Task<CustomerDto> AddCustomerToBank(int bankId, CustomerDto entity);
     }
 
 
@@ -89,22 +89,22 @@ namespace Logic.Services
             await _bankRepository.Delete(id);
         }
 
-        public async Task<CustomerDto> AddCustomerToBank(int bankId, CustomerDto customer)
-        {
-            var bankFromDb = await _bankRepository.GetById(bankId).ConfigureAwait(false);
+        //public async Task<CustomerDto> AddCustomerToBank(int bankId, CustomerDto customer)
+        //{
+        //    var bankFromDb = await _bankRepository.GetById(bankId).ConfigureAwait(false);
 
-            if (bankFromDb != null)
-            {
-                var customerToAdd = _mapper.Map<Customer>(customer);
+        //    if (bankFromDb != null)
+        //    {
+        //        var customerToAdd = _mapper.Map<Customer>(customer);
 
-                var bankCustomer = await _bankRepository.AddCustomerToBank(bankId, customerToAdd);
-                return _mapper.Map<Customer, CustomerDto>(bankCustomer);
+        //        var bankCustomer = await _bankRepository.AddCustomerToBank(bankId, customerToAdd);
+        //        return _mapper.Map<Customer, CustomerDto>(bankCustomer);
 
-            }
+        //    }
 
-            return null;
+        //    return null;
 
-        }
+        //}
     }
 
     

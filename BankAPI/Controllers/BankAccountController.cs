@@ -63,13 +63,13 @@ namespace BankAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("Create")]
-        public async Task<IActionResult> Create([FromBody] CreateBankAccountDto createBankAccountDto)
+        public async Task<IActionResult> Create(int bankId, [FromBody] CreateBankAccountDto createBankAccountDto)
         {
             try
             {
                 var newBankAccount =
                     await _bankAccountService
-                        .Create(createBankAccountDto)
+                        .Create(bankId, createBankAccountDto)
                         .ConfigureAwait(false);
 
                 return Ok(newBankAccount);
@@ -118,13 +118,26 @@ namespace BankAPI.Controllers
                     return BadRequest("Bank account doesn't exist in the database.");
                 }
                 await _bankAccountService.Delete(id).ConfigureAwait(true);
-                return Ok();
+                return Ok("Bank account has been deleted");
             }
             catch (Exception ex)
             {
                 // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
             }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("AddCustomerToAccount")]
+        public async Task<IActionResult> AddCustomerToAccount(int accountId, CustomerDto customerDto)
+        {
+            var accountToAdd = await _bankAccountService.AddCustomerToAccount(accountId, customerDto);
+
+            if (accountToAdd == null)
+            {
+                return BadRequest("Bank account doesn't exist in the database.");
+            }
+            return Ok("Customer was added to the bank account");
         }
 
     }

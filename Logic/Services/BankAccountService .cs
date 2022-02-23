@@ -18,9 +18,10 @@ namespace Logic.Services
     {
         Task<BankAccountDto> GetById(int bankId);
         Task<List<BankAccountDto>> GetAll();
-        Task<BankAccountDto> Create(CreateBankAccountDto createUpdateBankDto);
+        Task<BankAccountDto> Create(int bankId, CreateBankAccountDto createUpdateBankDto);
         Task<BankAccountDto> Update(BankAccountDto updateBankAccountDto);
         Task Delete(int id);
+        Task<CustomerDto> AddCustomerToAccount(int accountId, CustomerDto customerDto);
     }
 
 
@@ -60,10 +61,10 @@ namespace Logic.Services
 
 
         //Create
-        public async Task<BankAccountDto> Create(CreateBankAccountDto createBankAccountDto)
+        public async Task<BankAccountDto> Create(int bankId, CreateBankAccountDto createBankAccountDto)
         {
             var newBankAccount = _mapper.Map<BankAccount>(createBankAccountDto);
-            await _bankAccountRepository.Create(newBankAccount);
+            await _bankAccountRepository.Create(bankId, newBankAccount);
 
             return _mapper.Map<BankAccount, BankAccountDto>(newBankAccount);
         }
@@ -87,6 +88,23 @@ namespace Logic.Services
         public async Task Delete(int id)
         {
             await _bankAccountRepository.Delete(id);
+        }
+
+        public async Task<CustomerDto> AddCustomerToAccount(int accountId, CustomerDto customerDto)
+        {
+            var accountFromDb = await _bankAccountRepository.GetById(accountId).ConfigureAwait(false);
+
+            if (accountFromDb != null)
+            {
+                var customerToAdd = _mapper.Map<Customer>(customerDto);
+
+                var customer = await _bankAccountRepository.AddCustomerToAccount(accountId, customerToAdd);
+                return _mapper.Map<Customer, CustomerDto>(customer);
+
+            }
+
+            return null;
+
         }
     }
 

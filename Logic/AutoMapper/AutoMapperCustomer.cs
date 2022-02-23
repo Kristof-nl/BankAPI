@@ -14,6 +14,8 @@ namespace Logic.AutoMapper
         public AutoMapperCustomer()
         {
             CreateMap<Customer, CustomerDto>().ReverseMap();
+            CreateMap<ShortCustomerDto, CustomerDto>().ReverseMap();
+            CreateMap<Customer, ShortCustomerDto>().ReverseMap();
             CreateMap<CreateCustomerDto, Customer>()
                .ForMember(c => c.Address, c => c.MapFrom(createUpdateBankDto => new Address()
                {

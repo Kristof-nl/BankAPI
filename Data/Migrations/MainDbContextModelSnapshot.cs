@@ -87,6 +87,9 @@ namespace Data.Migrations
                     b.Property<string>("AccountNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("BankId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
@@ -97,6 +100,8 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BankId");
 
                     b.HasIndex("CustomerId");
 
@@ -214,9 +219,15 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.DataObjects.BankAccount", b =>
                 {
+                    b.HasOne("Data.DataObjects.Bank", "Bank")
+                        .WithMany("BankAccounts")
+                        .HasForeignKey("BankId");
+
                     b.HasOne("Data.DataObjects.Customer", "Customer")
                         .WithMany("BankAccounts")
                         .HasForeignKey("CustomerId");
+
+                    b.Navigation("Bank");
 
                     b.Navigation("Customer");
                 });
@@ -249,6 +260,8 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.DataObjects.Bank", b =>
                 {
+                    b.Navigation("BankAccounts");
+
                     b.Navigation("Customers");
                 });
 

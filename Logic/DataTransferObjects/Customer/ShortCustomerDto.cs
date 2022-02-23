@@ -1,7 +1,4 @@
-﻿using Data.DataObjects;
-using Logic.DataTransferObjects.Bank;
-using Logic.DataTransferObjects.BankAccount;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,14 +6,12 @@ using System.Threading.Tasks;
 
 namespace Logic.DataTransferObjects.Customer
 {
-    public class CustomerDto
+    public class ShortCustomerDto
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int AddressId { get; set; }
-        public Address Address { get; set; }
-        public ShortBankDto Bank { get; set; }
-        public ICollection<ShortBankAccountDto> BankAccounts { get; set; }
+        
     }
 }
