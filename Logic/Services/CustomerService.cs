@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CrossCuttingConcerns.PagingSorting;
 using Data.DataObjects;
 using Data.Repository;
 using Logic.DataTransferObjects.Bank;
@@ -21,7 +22,9 @@ namespace Logic.Services
         Task<CustomerDto> Create(CreateCustomerDto createUpdateBankDto);
         Task<CustomerDto> Update(CustomerDto updateCustomerDto);
         Task Delete(int id);
-        //Task<BankAccountDto> AddAccountToCustomer(int cumstomerId, BankAccountDto bankAccountDto);
+        Task<PaginatedList<CustomerForListDto>> GetPagedList(
+          int? pageNumber, string sortField, string sortOrder,
+          int? pageSize);
     }
 
 
@@ -97,22 +100,32 @@ namespace Logic.Services
         }
 
 
-        //public async Task<BankAccountDto> AddAccountToCustomer(int cumstomerId, BankAccountDto bankAccountDto)
-        //{
-        //    var customerFromDb = await _customerRepository.GetById(cumstomerId).ConfigureAwait(false);
-
-        //    if (customerFromDb != null)
-        //    {
-        //        var accountToAdd = _mapper.Map<BankAccount>(bankAccountDto);
-
-        //        var bankAccountCustomer = await _customerRepository.AddAccountToCustomer(cumstomerId, accountToAdd);
-        //        return _mapper.Map<BankAccount, BankAccountDto>(accountToAdd);
-
-        //    }
-
-        //    return null;
-
-        //}
+       public async Task<PaginatedList<CustomerForListDto>> GetPagedList(
+       int? pageNumber, string sortField, string sortOrder,
+       int? pageSize)
+        {
+            PaginatedList<Customer> result =
+                await _customerRepository.GetSortList(pageNumber, sortField, sortOrder, pageSize);
+            return new PaginatedList<CustomerForListDto>
+            {
+                CurrentPage = result.CurrentPage,
+                From = result.From,
+                PageSize = result.PageSize,
+                To = result.To,
+                TotalCount = result.TotalCount,
+                TotalPages = result.TotalPages,
+                Items = result.Items.Select(ua => new CustomerForListDto
+                {
+                    Id = ua.Id,
+                    FirstName = ua.FirstName,
+                    LastName = ua.LastName,
+                    Address = ua.Address,
+                    BankAccounts = _mapper.Map<List<VeryShortBankAccountDto>>(ua.BankAccounts),
+                    
+                    Bank = _mapper.Map<ShortBankDto>(ua.Bank),
+                }).ToList()
+            };
+        }
     }
 
     

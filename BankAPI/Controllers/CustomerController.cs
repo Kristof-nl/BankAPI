@@ -1,4 +1,5 @@
-﻿using Logic.DataTransferObjects.Bank;
+﻿using CrossCuttingConcerns.PagingSorting;
+using Logic.DataTransferObjects.Bank;
 using Logic.DataTransferObjects.BankAccount;
 using Logic.DataTransferObjects.Customer;
 using Logic.Services;
@@ -127,18 +128,28 @@ namespace BankAPI.Controllers
             }
         }
 
-        
-        //[AllowAnonymous]
-        //[HttpPost("AddAccountToCustomer")]
-        //public async Task<IActionResult> AddAccountToCustomer(int customerId, BankAccountDto bankAccountDto)
-        //{
-        //    var accountToAdd = await _customerService.AddAccountToCustomer(customerId, bankAccountDto);
+        [AllowAnonymous]
+        [HttpGet("GetPagedList")]
+        public async Task<ActionResult<PaginatedList<CustomerForListDto>>> Get(
+            int? pageNumber, string sortField, string sortOrder,
+            int? pageSize)
+        {
+            var list = await _customerService.GetPagedList(pageNumber, sortField, sortOrder, pageSize);
+            return list;
+        }
 
-        //    if (accountToAdd == null)
-        //    {
-        //        return BadRequest("Bank account doesn't exist in the database.");
-        //    }
-        //    return Ok("Customer was added to the bank account");
+
+        //[AllowAnonymous]
+        //[HttpGet("SearchByFieldAndNameWithPaging")]
+        //public async Task<ActionResult<PaginatedList<CustomerDto>>> SearchByFieldWithPaging(
+        //    string searchField, string searchName,
+        //    int? pageNumber, string sortField, string sortOrder,
+        //    int? pageSize)
+        //{
+
+
+        //    var list = await _customerService.SearchWithPaging(pageNumber, sortField, sortOrder, pageSize, searchField, searchName);
+        //    return list;
         //}
     }
 }

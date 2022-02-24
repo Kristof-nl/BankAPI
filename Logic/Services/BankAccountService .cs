@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CrossCuttingConcerns.PagingSorting;
 using Data.DataObjects;
 using Data.Repository;
 using Logic.DataTransferObjects.Bank;
@@ -22,6 +23,9 @@ namespace Logic.Services
         Task<BankAccountDto> Update(BankAccountDto updateBankAccountDto);
         Task Delete(int id);
         Task<CustomerDto> AddCustomerToAccount(int accountId, CustomerDto customerDto);
+        Task<PaginatedList<ShortBankAccountDto>> GetPagedList(
+        int? pageNumber, string sortField, string sortOrder,
+        int? pageSize);
     }
 
 
@@ -105,6 +109,32 @@ namespace Logic.Services
 
             return null;
 
+        }
+
+        public async Task<PaginatedList<ShortBankAccountDto>> GetPagedList(
+      int? pageNumber, string sortField, string sortOrder,
+      int? pageSize)
+        {
+            PaginatedList<BankAccount> result =
+                await _bankAccountRepository.GetSortList(pageNumber, sortField, sortOrder, pageSize);
+            return new PaginatedList<ShortBankAccountDto>
+            {
+                CurrentPage = result.CurrentPage,
+                From = result.From,
+                PageSize = result.PageSize,
+                To = result.To,
+                TotalCount = result.TotalCount,
+                TotalPages = result.TotalPages,
+                Items = result.Items.Select(ua => new ShortBankAccountDto
+                {
+                    Id = ua.Id,
+                    Type = ua.Type,
+                    AccountBalance = ua.AccountBalance,
+                    AccountNumber = ua.AccountNumber,
+                    Customer = _mapper.Map<ShortCustomerDto>(ua.Customer),
+                    Bank = _mapper.Map<ShortBankDto>(ua.Bank),
+                }).ToList()
+            };
         }
     }
 

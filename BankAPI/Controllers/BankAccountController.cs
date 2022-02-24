@@ -1,4 +1,5 @@
-﻿using Logic.DataTransferObjects.Bank;
+﻿using CrossCuttingConcerns.PagingSorting;
+using Logic.DataTransferObjects.Bank;
 using Logic.DataTransferObjects.BankAccount;
 using Logic.DataTransferObjects.Customer;
 using Logic.Services;
@@ -138,6 +139,17 @@ namespace BankAPI.Controllers
                 return BadRequest("Bank account doesn't exist in the database.");
             }
             return Ok("Customer was added to the bank account");
+        }
+
+
+        [AllowAnonymous]
+        [HttpGet("GetPagedList")]
+        public async Task<ActionResult<PaginatedList<ShortBankAccountDto>>> Get(
+            int? pageNumber, string sortField, string sortOrder,
+            int? pageSize)
+        {
+            var list = await _bankAccountService.GetPagedList(pageNumber, sortField, sortOrder, pageSize);
+            return list;
         }
 
     }

@@ -14,11 +14,11 @@ namespace Data.Repository
     {
         IQueryable<BankAccount> GetAll();
 
-        Task<PaginatedList<BankAccount>> GetList(
-            int? pageNumber,
-            string sortField,
-            string sortOrder,
-            int? pageSize);
+        Task<PaginatedList<BankAccount>> GetSortList(
+           int? pageNumber,
+           string sortField,
+           string sortOrder,
+           int? pageSize);
 
         Task<BankAccount> GetById(int id);
         Task<BankAccount> GetByIdWithTracking(int id);
@@ -40,6 +40,8 @@ namespace Data.Repository
         {
             _mainDbContext = mainDbContext;
         }
+
+        private const int PageSize = 10;
 
         public override async Task<BankAccount> GetById(int id)
         {
@@ -115,6 +117,21 @@ namespace Data.Repository
             
             return entity;
 
+        }
+
+        public async Task<PaginatedList<BankAccount>> GetSortList(
+          int? pageNumber,
+          string sortField,
+          string sortOrder,
+          int? pageSize)
+        {
+            IQueryable<BankAccount> query = _mainDbContext.BankAccounts
+                .Include(p => p.Transactions)
+                .Include(p => p.Customer)
+                .Include(x => x.Bank);
+
+            return await PaginatedList<BankAccount>
+               .CreateAsync(query.AsNoTracking(), pageNumber ?? 1, pageSize ?? PageSize, sortField ?? "Id", sortOrder ?? "ASC");
         }
     }
 }

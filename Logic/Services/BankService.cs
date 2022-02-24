@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CrossCuttingConcerns.PagingSorting;
 using Data.DataObjects;
 using Data.Repository;
 using Logic.DataTransferObjects.Bank;
@@ -20,6 +21,9 @@ namespace Logic.Services
         Task<BankAdminDto> Create(CreateUpdateBankDto createUpdateBankDto);
         Task<BankAdminDto> Update(BankAdminDto updateBankDto);
         Task Delete(int id);
+        Task<PaginatedList<ShortBankDto>> GetPagedList(
+          int? pageNumber, string sortField, string sortOrder,
+          int? pageSize);
     }
 
 
@@ -86,6 +90,28 @@ namespace Logic.Services
         public async Task Delete(int id)
         {
             await _bankRepository.Delete(id);
+        }
+
+       public async Task<PaginatedList<ShortBankDto>> GetPagedList(
+       int? pageNumber, string sortField, string sortOrder,
+       int? pageSize)
+        {
+            PaginatedList<Bank> result =
+                await _bankRepository.GetSortList(pageNumber, sortField, sortOrder, pageSize);
+            return new PaginatedList<ShortBankDto>
+            {
+                CurrentPage = result.CurrentPage,
+                From = result.From,
+                PageSize = result.PageSize,
+                To = result.To,
+                TotalCount = result.TotalCount,
+                TotalPages = result.TotalPages,
+                Items = result.Items.Select(ua => new ShortBankDto
+                {
+                    Id = ua.Id,
+                    Name = ua.Name
+                }).ToList()
+            };
         }
     } 
 

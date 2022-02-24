@@ -14,19 +14,17 @@ namespace Data.Repository
     {
         IQueryable<Bank> GetAll();
 
-        Task<PaginatedList<Bank>> GetList(
-            int? pageNumber,
-            string sortField,
-            string sortOrder,
-            int? pageSize);
+        Task<PaginatedList<Bank>> GetSortList(
+           int? pageNumber,
+           string sortField,
+           string sortOrder,
+           int? pageSize);
 
         Task<Bank> GetById(int id);
         Task<Bank> GetByIdWithTracking(int id);
         Task<Bank> Create(Bank entity);
         Task Update(Bank entity);
-        Task Delete(int id);
-        //Task<Customer> AddCustomerToBank(int bankId, Customer entity);
-            
+        Task Delete(int id);    
 
     }
 
@@ -38,6 +36,8 @@ namespace Data.Repository
         {
             _mainDbContext = mainDbContext;
         }
+
+        private const int PageSize = 10;
 
         public override async Task<Bank> GetById(int id)
         {
@@ -78,23 +78,22 @@ namespace Data.Repository
             await _mainDbContext.SaveChangesAsync();
         }
 
-        //public async Task<Customer> AddCustomerToBank(int bankId, Customer entity)
-        //{
+        public async Task<PaginatedList<Bank>> GetSortList(
+          int? pageNumber,
+          string sortField,
+          string sortOrder,
+          int? pageSize)
+        {
+            IQueryable<Bank> query = _mainDbContext.Banks
+                .Include(p => p.BankAccounts)
+                .Include(a => a.Address)
+                .ThenInclude(a => a.ContactInfo)
+                .Include(c => c.Customers);
+                
 
-        //    var bank = await GetAll()
-        //        .Include(a => a.Address)
-        //        .ThenInclude(a => a.ContactInfo)
-        //        .Include(c => c.Customers)
-        //        .AsNoTracking()
-        //        .FirstOrDefaultAsync(x => x.Id == bankId)
-        //        .ConfigureAwait(false);
-
-        //    bank.Customers.Add(entity);
-        //    _mainDbContext.Update(bank);
-        //    await _mainDbContext.SaveChangesAsync();
-
-        //    return entity;
-        //}
+            return await PaginatedList<Bank>
+               .CreateAsync(query.AsNoTracking(), pageNumber ?? 1, pageSize ?? PageSize, sortField ?? "Id", sortOrder ?? "ASC");
+        }
 
     }
 }
