@@ -1,4 +1,5 @@
 ﻿using CrossCuttingConcerns.PagingSorting;
+using CrossCuttingConserns.Filters;
 using Logic.DataTransferObjects.Bank;
 using Logic.DataTransferObjects.BankAccount;
 using Logic.DataTransferObjects.Customer;
@@ -139,18 +140,44 @@ namespace BankAPI.Controllers
         }
 
 
-        //[AllowAnonymous]
-        //[HttpGet("SearchByFieldAndNameWithPaging")]
-        //public async Task<ActionResult<PaginatedList<CustomerDto>>> SearchByFieldWithPaging(
-        //    string searchField, string searchName,
-        //    int? pageNumber, string sortField, string sortOrder,
-        //    int? pageSize)
-        //{
+
+        [AllowAnonymous]
+        [HttpGet("SearchByFieldAndNameWithPaging")]
+        public async Task<ActionResult<PaginatedList<CustomerForListDto>>> SearchByFieldWithPaging(
+            string searchField, string searchName,
+            int? pageNumber, string sortField, string sortOrder,
+            int? pageSize)
+        {
 
 
-        //    var list = await _customerService.SearchWithPaging(pageNumber, sortField, sortOrder, pageSize, searchField, searchName);
-        //    return list;
-        //}
+            var list = await _customerService.SearchWithPaging(pageNumber, sortField, sortOrder, pageSize, searchField, searchName);
+            return list;
+        }
+
+
+
+        [AllowAnonymous]
+        [HttpPost("Filter")]
+        public async Task<ActionResult<PaginatedList<CustomerForListDto>>> Filter([FromBody] CustomerFilter filterDto, int? pageNumber, string sortField, string sortOrder,
+            int? pageSize)
+        {
+            try
+            {
+                var query = await _customerService.Filter(filterDto, pageNumber, sortField, sortOrder, pageSize).ConfigureAwait(false);
+
+                if (query == null)
+                {
+                    return BadRequest("Any results in the database");
+                }
+                return query;
+
+            }
+            catch (Exception ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }
 

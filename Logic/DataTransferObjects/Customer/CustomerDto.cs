@@ -14,9 +14,10 @@ namespace Logic.DataTransferObjects.Customer
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public DateTime DateOfBirth { get; set; }
         public int AddressId { get; set; }
         public Address Address { get; set; }
         public ShortBankDto Bank { get; set; }
-        public ICollection<ShortBankAccountDto> BankAccounts { get; set; }
+        public ICollection<VeryShortBankAccountDto> BankAccounts { get; set; }
     }
 }

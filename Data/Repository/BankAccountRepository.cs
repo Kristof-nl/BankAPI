@@ -75,7 +75,9 @@ namespace Data.Repository
                 .ConfigureAwait(false);
 
             entity.Bank = bank;
+            bank.AmountOfCash += entity.AccountBalance;
 
+            _mainDbContext.Update(bank);
             await _mainDbContext.BankAccounts.AddAsync(entity);
             await _mainDbContext.SaveChangesAsync();
             return entity;
@@ -109,7 +111,8 @@ namespace Data.Repository
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == accountId)
                 .ConfigureAwait(false);
-            
+
+
             entity.Bank = bankAccount.Bank;
             bankAccount.Customer = entity;
             _mainDbContext.Update(bankAccount);

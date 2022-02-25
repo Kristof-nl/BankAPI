@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CrossCuttingConcerns.PagingSorting;
+using CrossCuttingConserns.Filters;
 using Data.DataObjects;
 using Data.Repository;
 using Logic.DataTransferObjects.Bank;
@@ -25,6 +26,11 @@ namespace Logic.Services
         Task<PaginatedList<CustomerForListDto>> GetPagedList(
           int? pageNumber, string sortField, string sortOrder,
           int? pageSize);
+        Task<PaginatedList<CustomerForListDto>> SearchWithPaging(
+        int? pageNumber, string sortField, string sortOrder,
+        int? pageSize, string searchField, string searchName);
+        Task<PaginatedList<CustomerForListDto>> Filter(CustomerFilter profileFilterDto, int? pageNumber, string sortField, string sortOrder,
+           int? pageSize);
     }
 
 
@@ -122,6 +128,59 @@ namespace Logic.Services
                     Address = ua.Address,
                     BankAccounts = _mapper.Map<List<VeryShortBankAccountDto>>(ua.BankAccounts),
                     
+                    Bank = _mapper.Map<ShortBankDto>(ua.Bank),
+                }).ToList()
+            };
+        }
+
+        public async Task<PaginatedList<CustomerForListDto>> SearchWithPaging(
+       int? pageNumber, string sortField, string sortOrder,
+       int? pageSize, string searchField, string searchName)
+        {
+            PaginatedList<Customer> result =
+                await _customerRepository.SearchWithPaging(pageNumber, sortField, sortOrder, pageSize, searchField, searchName);
+            return new PaginatedList<CustomerForListDto>
+            {
+                CurrentPage = result.CurrentPage,
+                From = result.From,
+                PageSize = result.PageSize,
+                To = result.To,
+                TotalCount = result.TotalCount,
+                TotalPages = result.TotalPages,
+                Items = result.Items.Select(ua => new CustomerForListDto
+                {
+                    Id = ua.Id,
+                    FirstName = ua.FirstName,
+                    LastName = ua.LastName,
+                    Address = ua.Address,
+                    BankAccounts = _mapper.Map<List<VeryShortBankAccountDto>>(ua.BankAccounts),
+
+                    Bank = _mapper.Map<ShortBankDto>(ua.Bank),
+                }).ToList()
+            };
+        }
+
+        public async Task<PaginatedList<CustomerForListDto>> Filter(CustomerFilter profileFilterDto, int? pageNumber, string sortField, string sortOrder,
+           int? pageSize)
+        {
+            PaginatedList<Customer> result =
+                await _customerRepository.Filter(profileFilterDto, pageNumber, sortField, sortOrder, pageSize);
+            return new PaginatedList<CustomerForListDto>
+            {
+                CurrentPage = result.CurrentPage,
+                From = result.From,
+                PageSize = result.PageSize,
+                To = result.To,
+                TotalCount = result.TotalCount,
+                TotalPages = result.TotalPages,
+                Items = result.Items.Select(ua => new CustomerForListDto
+                {
+                    Id = ua.Id,
+                    FirstName = ua.FirstName,
+                    LastName = ua.LastName,
+                    Address = ua.Address,
+                    BankAccounts = _mapper.Map<List<VeryShortBankAccountDto>>(ua.BankAccounts),
+
                     Bank = _mapper.Map<ShortBankDto>(ua.Bank),
                 }).ToList()
             };

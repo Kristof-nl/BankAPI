@@ -67,6 +67,11 @@ namespace BankAPI.Controllers
         {
             try
             {
+                if(createUpdateBankDto.AmountOfCash < 0)
+                {
+                    return BadRequest("Amount of cash must be at least 0 ");
+                }
+
                 var newBank =
                     await _bankService
                         .Create(createUpdateBankDto)
