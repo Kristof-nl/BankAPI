@@ -18,6 +18,6 @@ namespace Logic.DataTransferObjects.BankAccount
         public double AccountBalance { get; set; }
         public ShortBankDto Bank { get; set; }
         public ShortCustomerDto Customer { get; set; }
-        public ICollection<Transaction> Transactions { get; set; }
+        public ICollection<Data.DataObjects.Transaction> Transactions { get; set; }
     }
 }

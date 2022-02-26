@@ -26,6 +26,7 @@ namespace Logic.Services
         Task<PaginatedList<ShortBankAccountDto>> GetPagedList(
         int? pageNumber, string sortField, string sortOrder,
         int? pageSize);
+        Task<BankAccountDto> AskForLoan(int bankAccountId);
     }
 
 
@@ -135,6 +136,20 @@ namespace Logic.Services
                     Bank = _mapper.Map<ShortBankDto>(ua.Bank),
                 }).ToList()
             };
+        }
+
+        public async Task<BankAccountDto> AskForLoan(int bankAccountId)
+        {
+            var bankAccountFromDb = await _bankAccountRepository.GetById(bankAccountId).ConfigureAwait(false);
+
+
+            if(bankAccountFromDb == null)
+            {
+                return null;
+            }
+
+            await _bankAccountRepository.AskForLoan(bankAccountId);
+            return _mapper.Map<BankAccount, BankAccountDto>(bankAccountFromDb);
         }
     }
 

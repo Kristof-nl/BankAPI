@@ -68,6 +68,16 @@ namespace BankAPI.Controllers
         {
             try
             {
+                if(bankId == 0)
+                {
+                    return BadRequest("Please write a bank Id");
+                }
+
+                if (createBankAccountDto.AccountBalance < 0)
+                {
+                    return BadRequest("Account balance must be at least 0 ");
+                }
+
                 var newBankAccount =
                     await _bankAccountService
                         .Create(bankId, createBankAccountDto)
@@ -151,6 +161,32 @@ namespace BankAPI.Controllers
             var list = await _bankAccountService.GetPagedList(pageNumber, sortField, sortOrder, pageSize);
             return list;
         }
+
+        [AllowAnonymous]
+        [HttpPost("AskForLoan")]
+        public async Task<IActionResult> AskForLoan(int accountId)
+        {
+            try
+            {
+                
+                var loan = await _bankAccountService.AskForLoan(accountId);
+               
+                if (loan != null)
+                {
+                    return Ok(loan);
+                }
+
+                return Ok("Sorry your ask for loan has been refused.");
+
+            }
+            catch (Exception ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+
 
     }
 }

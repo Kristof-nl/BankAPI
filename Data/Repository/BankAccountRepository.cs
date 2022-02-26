@@ -27,6 +27,7 @@ namespace Data.Repository
         Task Delete(int id);
         Task<Customer> AddCustomerToAccount(int accountId, Customer entity);
         Task<IQueryable<BankAccount>> GetAllWithExtraFields();
+        Task<BankAccount> AskForLoan(int bankAccountId);
 
 
 
@@ -53,7 +54,7 @@ namespace Data.Repository
                 .ConfigureAwait(false);
         }
 
-        public async Task <IQueryable<BankAccount>> GetAllWithExtraFields()
+        public async Task<IQueryable<BankAccount>> GetAllWithExtraFields()
         {
             return _mainDbContext.BankAccounts.Include(c => c.Customer).Include(b => b.Bank).AsNoTracking();
         }
@@ -135,6 +136,21 @@ namespace Data.Repository
 
             return await PaginatedList<BankAccount>
                .CreateAsync(query.AsNoTracking(), pageNumber ?? 1, pageSize ?? PageSize, sortField ?? "Id", sortOrder ?? "ASC");
+        }
+
+
+        public async Task<BankAccount> AskForLoan(int bankAccountId)
+        {
+            var bankAccount = await GetAll()
+                .Include(x => x.Customer)
+                .Include(b => b.Bank)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == bankAccountId)
+                .ConfigureAwait(false);
+
+            var bank = await _mainDbContext.Banks.FirstOrDefaultAsync(x => x.Id == bankAccount.Bank.Id);
+
+            return null;
         }
     }
 }

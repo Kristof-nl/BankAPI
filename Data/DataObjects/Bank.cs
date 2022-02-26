@@ -17,6 +17,7 @@ namespace Data.DataObjects
         public Address Address { get; set; }
         public double AmountOfCash { get; set; }
         public int Rating { get; set; }
+        public ICollection<BankTransaction> BankTransactions { get; set; }
         public ICollection<Customer> Customers { get; set; }
         public ICollection<BankAccount> BankAccounts { get; set; }
     }
