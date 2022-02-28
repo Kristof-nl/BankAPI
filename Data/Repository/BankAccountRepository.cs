@@ -60,10 +60,10 @@ namespace Data.Repository
         }
 
 
-
         //Create
         public async Task<BankAccount> Create(int bankId, BankAccount entity)
         {
+            //Make random account number
             Random rnd = new();
             int first = rnd.Next(0000, 9999);
             int second = rnd.Next(0000, 9999);
@@ -71,16 +71,47 @@ namespace Data.Repository
 
             entity.AccountNumber = $"0012 {first} 1678 {second} 8764 {third}";
 
+            //Get bank to at it to entity
             var bank = await _mainDbContext.Banks
                 .FirstOrDefaultAsync(x => x.Id == bankId)
                 .ConfigureAwait(false);
 
             entity.Bank = bank;
-            bank.AmountOfCash += entity.AccountBalance;
 
-            _mainDbContext.Update(bank);
             await _mainDbContext.BankAccounts.AddAsync(entity);
+
+
+            //Make new bank transaction and add it to DB
+            var bankTransaction = new BankTransaction()
+            {
+                Type = "Add new account",
+                TransactionDate = DateTime.Now,
+                Ammount = entity.AccountBalance,
+                AmmountBefore = bank.AmountOfCash,
+                AammountAfter = bank.AmountOfCash + entity.AccountBalance,
+                Bank = bank,
+            };
+
+            //Create transaction and add it to bank account
+            Transaction transaction = new()
+            {
+                Name = $"Account creation {DateTime.Now.ToString()}",
+                Type = "Account creation",
+                TransactionDate = DateTime.Now,
+                Ammount = entity.AccountBalance,
+                AmmountBefore = entity.AccountBalance,
+                AammountAfter = entity.AccountBalance,
+                BankAccount = entity,
+            };
+
+            await _mainDbContext.Transactions.AddAsync(transaction);
+
+            await _mainDbContext.BankTransactions.AddAsync(bankTransaction);
+
+            //Add cash to bank if start bank account is not 0
+            bank.AmountOfCash += entity.AccountBalance;
             await _mainDbContext.SaveChangesAsync();
+            
             return entity;
         }
 
@@ -114,9 +145,17 @@ namespace Data.Repository
                 .ConfigureAwait(false);
 
 
-            entity.Bank = bankAccount.Bank;
+            //Add customer to bank
             bankAccount.Customer = entity;
-            _mainDbContext.Update(bankAccount);
+
+            //Add bank and bank account to customer
+            if(entity.Bank == null)
+            {
+                entity.BankAccounts.Add(bankAccount);
+                entity.Bank = bankAccount.Bank;
+            }
+
+            _mainDbContext.Update(entity);
             await _mainDbContext.SaveChangesAsync();
             
             return entity;

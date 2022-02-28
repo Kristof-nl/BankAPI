@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Logic.DataTransferObjects.Transaction
 {
-    public class TransactionDtocs
+    public class TransactionDtoc
     {
         public string Name { get; set; }
         public DateTime TransactionDate { get; set; }

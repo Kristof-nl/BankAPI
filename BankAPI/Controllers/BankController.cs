@@ -1,5 +1,6 @@
 ﻿using CrossCuttingConcerns.PagingSorting;
 using Logic.DataTransferObjects.Bank;
+using Logic.DataTransferObjects.BankTransactions;
 using Logic.DataTransferObjects.Customer;
 using Logic.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -141,6 +142,16 @@ namespace BankAPI.Controllers
             var list = await _bankService.GetPagedList(pageNumber, sortField, sortOrder, pageSize);
             return list;
         }
+
+        //[AllowAnonymous]
+        //[HttpGet("GetPagedListBankTransactions")]
+        //public async Task<ActionResult<PaginatedList<ShortBankTransactionDto>>> GetTransactions(
+        //    int? pageNumber, string sortField, string sortOrder,
+        //    int? pageSize)
+        //{
+        //    var list = await _bankService.GetPagedList(pageNumber, sortField, sortOrder, pageSize);
+        //    return list;
+        //}
 
     }
 }

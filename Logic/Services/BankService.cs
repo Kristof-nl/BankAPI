@@ -3,6 +3,7 @@ using CrossCuttingConcerns.PagingSorting;
 using Data.DataObjects;
 using Data.Repository;
 using Logic.DataTransferObjects.Bank;
+using Logic.DataTransferObjects.BankTransactions;
 using Logic.DataTransferObjects.Customer;
 using Logic.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,7 @@ namespace Logic.Services
     {
         Task<BankAdminDto> GetById(int bankId);
         Task<List<ShortBankDto>> GetAll();
+        Task<List<ShortBankTransactionDto>> GetAllBankTransactions();
         Task<BankAdminDto> Create(CreateUpdateBankDto createUpdateBankDto);
         Task<BankAdminDto> Update(BankAdminDto updateBankDto);
         Task Delete(int id);
@@ -112,6 +114,13 @@ namespace Logic.Services
                     Name = ua.Name
                 }).ToList()
             };
+        }
+
+        public async Task<List<ShortBankTransactionDto>> GetAllBankTransactions()
+        {
+            var allTransactionsFromDb = await _bankRepository.GetAll().ToListAsync().ConfigureAwait(false);
+
+            return _mapper.Map<List<Bank>, List<ShortBankTransactionDto>>(allTransactionsFromDb);
         }
     } 
 
