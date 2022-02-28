@@ -44,11 +44,13 @@ namespace BankAPI
             services.AddScoped<IBankService, BankService>();
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IBankAccountService, BankAccountService>();
+            services.AddScoped<IOperationService, OperationService>();
 
             // Repositories
             services.AddScoped<IBankRepository, BankRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IBankAccountRepository, BankAccountRepository>();
+            services.AddScoped<IOperationRepository, OperationRepository>();
 
             // AutoMapper configuration
             services.AddAutoMapper(typeof(AutoMapperBank).Assembly);
