@@ -40,6 +40,8 @@ namespace Data.Repository
         Task<PaginatedList<Customer>> Filter(CustomerFilter profileFilterDto, int? pageNumber, string sortField, string sortOrder,
             int? pageSize);
 
+        Task<Customer>GetCustomerWithTransactions(int customerId);
+
     }
 
     public class CustomerRepository : GenericRepository<Customer>, ICustomerRepository
@@ -228,6 +230,19 @@ namespace Data.Repository
 
             return await PaginatedList<Customer>
               .CreateAsync(query.AsNoTracking(), pageNumber ?? 1, pageSize ?? PageSize, sortField ?? "Id", sortOrder ?? "ASC");
+
+        }
+
+        public async Task<Customer>GetCustomerWithTransactions(int customerId)
+        {
+            return await GetAll()
+                .Include(a => a.Address)
+                .ThenInclude(a => a.ContactInfo)
+                .Include(c => c.BankAccounts)
+                .ThenInclude(t => t.Transactions)
+                .Include(c => c.Bank)
+                .FirstOrDefaultAsync(x => x.Id == customerId)
+                .ConfigureAwait(false);
 
         }
 

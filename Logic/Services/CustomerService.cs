@@ -6,6 +6,7 @@ using Data.Repository;
 using Logic.DataTransferObjects.Bank;
 using Logic.DataTransferObjects.BankAccount;
 using Logic.DataTransferObjects.Customer;
+using Logic.DataTransferObjects.Transaction;
 using Logic.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -31,6 +32,9 @@ namespace Logic.Services
         int? pageSize, string searchField, string searchName);
         Task<PaginatedList<CustomerForListDto>> Filter(CustomerFilter profileFilterDto, int? pageNumber, string sortField, string sortOrder,
            int? pageSize);
+
+        Task<ShortCustomerDtoWithTransaction> GetCustomerWithTransactions(
+       int customerId);
     }
 
 
@@ -184,6 +188,15 @@ namespace Logic.Services
                     Bank = _mapper.Map<ShortBankDto>(ua.Bank),
                 }).ToList()
             };
+        }
+
+        public async Task<ShortCustomerDtoWithTransaction> GetCustomerWithTransactions(
+       int customerId)
+        {
+          var result = await _customerRepository.GetCustomerWithTransactions(customerId);
+            return _mapper.Map<Customer, ShortCustomerDtoWithTransaction>(result);
+            
+          
         }
     }
 

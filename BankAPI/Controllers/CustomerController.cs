@@ -42,6 +42,16 @@ namespace BankAPI.Controllers
             }
         }
 
+
+        [AllowAnonymous]
+        [HttpGet("GetCustomerWithTransactions/{customerId:int}")]
+        public async Task<ActionResult<ShortCustomerDtoWithTransaction>> GetTransactions(
+           int customerId)
+        {
+            var list = await _customerService.GetCustomerWithTransactions(customerId);
+            return list;
+        }
+
         [AllowAnonymous]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
