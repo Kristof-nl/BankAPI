@@ -17,6 +17,9 @@ namespace Logic.AutoMapper
             CreateMap<Bank, BankAdminDto>().ReverseMap();
             CreateMap<ShortBankDto, BankAdminDto>().ReverseMap();
             CreateMap<Bank, ShortBankDto>().ReverseMap();
+            CreateMap<Bank, ShortBankDtoWithTransations>().ReverseMap();
+            CreateMap<ShortBankDtoWithTransations, ShortBankDto>().ReverseMap();
+
             CreateMap<CreateUpdateBankDto, Bank>()
                .ForMember(c => c.Address, c => c.MapFrom(createUpdateBankDto => new Address()
                {

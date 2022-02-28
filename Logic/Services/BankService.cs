@@ -19,12 +19,14 @@ namespace Logic.Services
     {
         Task<BankAdminDto> GetById(int bankId);
         Task<List<ShortBankDto>> GetAll();
-        Task<List<ShortBankTransactionDto>> GetAllBankTransactions();
         Task<BankAdminDto> Create(CreateUpdateBankDto createUpdateBankDto);
         Task<BankAdminDto> Update(BankAdminDto updateBankDto);
         Task Delete(int id);
         Task<PaginatedList<ShortBankDto>> GetPagedList(
           int? pageNumber, string sortField, string sortOrder,
+          int? pageSize);
+        Task<PaginatedList<ShortBankDtoWithTransations>> GetPagedListWithTransations(
+          int bankId, int? pageNumber, string sortField, string sortOrder,
           int? pageSize);
     }
 
@@ -116,12 +118,30 @@ namespace Logic.Services
             };
         }
 
-        public async Task<List<ShortBankTransactionDto>> GetAllBankTransactions()
+        public async Task<PaginatedList<ShortBankDtoWithTransations>> GetPagedListWithTransations(
+       int bankId, int? pageNumber, string sortField, string sortOrder,
+       int? pageSize)
         {
-            var allTransactionsFromDb = await _bankRepository.GetAll().ToListAsync().ConfigureAwait(false);
-
-            return _mapper.Map<List<Bank>, List<ShortBankTransactionDto>>(allTransactionsFromDb);
+            PaginatedList<Bank> result =
+                await _bankRepository.GetSortListOfTransactions(pageNumber, sortField, sortOrder, pageSize, bankId);
+            return new PaginatedList<ShortBankDtoWithTransations>
+            {
+                CurrentPage = result.CurrentPage,
+                From = result.From,
+                PageSize = result.PageSize,
+                To = result.To,
+                TotalCount = result.TotalCount,
+                TotalPages = result.TotalPages,
+                Items = result.Items.Select(ua => new ShortBankDtoWithTransations
+                {
+                    Id = ua.Id,
+                    Name = ua.Name,
+                    BankTransactions = _mapper.Map<List<ShortBankTransactionDto>>(ua.BankTransactions)
+     
+                }).ToList()
+            };
         }
+
     } 
 
 }

@@ -95,7 +95,7 @@ namespace Data.Repository
             //Create transaction and add it to bank account
             Transaction transaction = new()
             {
-                Name = $"Account creation {DateTime.Now.ToString()}",
+                Name = $"Account creation {DateTime.Now.ToShortTimeString()}",
                 Type = "Account creation",
                 TransactionDate = DateTime.Now,
                 Ammount = entity.AccountBalance,

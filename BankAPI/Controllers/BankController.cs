@@ -143,15 +143,15 @@ namespace BankAPI.Controllers
             return list;
         }
 
-        //[AllowAnonymous]
-        //[HttpGet("GetPagedListBankTransactions")]
-        //public async Task<ActionResult<PaginatedList<ShortBankTransactionDto>>> GetTransactions(
-        //    int? pageNumber, string sortField, string sortOrder,
-        //    int? pageSize)
-        //{
-        //    var list = await _bankService.GetPagedList(pageNumber, sortField, sortOrder, pageSize);
-        //    return list;
-        //}
+        [AllowAnonymous]
+        [HttpGet("GetBankPagedListTransactions/{bankId:int}")]
+        public async Task<ActionResult<PaginatedList<ShortBankDtoWithTransations>>> GetTransactions(
+            int bankId, int? pageNumber, string sortField, string sortOrder,
+            int? pageSize)
+        {
+            var list = await _bankService.GetPagedListWithTransations(bankId, pageNumber, sortField, sortOrder, pageSize);
+            return list;
+        }
 
     }
 }

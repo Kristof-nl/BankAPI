@@ -24,8 +24,14 @@ namespace Data.Repository
         Task<Bank> GetByIdWithTracking(int id);
         Task<Bank> Create(Bank entity);
         Task Update(Bank entity);
-        Task Delete(int id);    
+        Task Delete(int id);
 
+        Task<PaginatedList<Bank>> GetSortListOfTransactions(
+           int? pageNumber,
+           string sortField,
+           string sortOrder,
+           int? pageSize,
+           int bankId);
     }
 
     public class BankRepository : GenericRepository<Bank>, IBankRepository
@@ -88,12 +94,33 @@ namespace Data.Repository
                 .Include(p => p.BankAccounts)
                 .Include(a => a.Address)
                 .ThenInclude(a => a.ContactInfo)
-                .Include(c => c.Customers);
+                .Include(c => c.Customers)
+                .Include(t => t.BankTransactions);
                 
 
             return await PaginatedList<Bank>
                .CreateAsync(query.AsNoTracking(), pageNumber ?? 1, pageSize ?? PageSize, sortField ?? "Id", sortOrder ?? "ASC");
         }
 
+        public async Task<PaginatedList<Bank>> GetSortListOfTransactions(
+           int? pageNumber,
+           string sortField,
+           string sortOrder,
+           int? pageSize,
+           int bankId)
+        {
+            IQueryable<Bank> query = _mainDbContext.Banks
+                .Include(p => p.BankAccounts)
+                .Include(a => a.Address)
+                .ThenInclude(a => a.ContactInfo)
+                .Include(c => c.Customers)
+                .Include(t => t.BankTransactions)
+                .Where(t => t.Id == bankId);
+
+           
+
+            return await PaginatedList<Bank>
+               .CreateAsync(query.AsNoTracking(), pageNumber ?? 1, pageSize ?? PageSize, sortField ?? "Id", sortOrder ?? "ASC");
     }
+}
 }

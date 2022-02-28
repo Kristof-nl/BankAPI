@@ -13,5 +13,7 @@ namespace Logic.DataTransferObjects.BankTransactions
         public string From { get; set; }
         public string To { get; set; }
         public double Ammount { get; set; }
+        public double AmmountBefore { get; set; }
+        public double AammountAfter { get; set; }
     }
 }
