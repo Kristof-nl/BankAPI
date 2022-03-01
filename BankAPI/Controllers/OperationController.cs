@@ -24,12 +24,12 @@ namespace BankAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("AskForLoan")]
-        public async Task<IActionResult> AskForLoan(int accountId, string bankName, int amount)
+        public async Task<IActionResult> AskForLoan(string bankName, int amount, [FromBody]BankAccountDto bankAccount)
         {
             try
             {
                 
-                var loan = await _operationService.AskForLoan(accountId, bankName, amount);
+                var loan = await _operationService.AskForLoan(bankName, amount, bankAccount);
                
                 if (loan != null)
                 {

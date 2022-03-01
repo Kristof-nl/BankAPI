@@ -13,6 +13,7 @@ namespace Data.DataObjects
         public int Id { get; set; }
         public string Name { get; set; }
         [ForeignKey("Address")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AddressId { get; set; }
         public Address Address { get; set; }
         public double AmountOfCash { get; set; }

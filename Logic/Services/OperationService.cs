@@ -17,7 +17,7 @@ namespace Logic.Services
 {
     public interface IOperationService
     {
-        Task<BankAccountDto> AskForLoan(int bankAccountId, string bankName, int amount);
+        Task<BankAccountDto> AskForLoan(string bankName, int amount, BankAccountDto bankAccount);
     }
 
 
@@ -36,16 +36,11 @@ namespace Logic.Services
         }
 
 
-        public async Task<BankAccountDto> AskForLoan(int bankAccountId, string bankName, int amount)
+        public async Task<BankAccountDto> AskForLoan(string bankName, int amount, BankAccountDto bankAccount)
         {
-            var bankAccountFromDb = await _operationRepository.GetById(bankAccountId).ConfigureAwait(false);
             BankAccount bankNameExist = await _operationRepository.CheckBankName(bankName);
 
-
-            if (bankAccountFromDb == null)
-            {
-                throw new NotFoundException("Account not found");
-            }
+            var bankAccountToRepo = _mapper.Map<BankAccount>(bankAccount);
 
             if (bankNameExist == null)
             {
@@ -53,8 +48,8 @@ namespace Logic.Services
             }
 
 
-            await _operationRepository.AskForLoan(bankAccountFromDb, bankName, amount);
-            return _mapper.Map<BankAccount, BankAccountDto>(bankAccountFromDb);
+            await _operationRepository.AskForLoan(bankAccountToRepo, bankName, amount);
+            return _mapper.Map<BankAccount, BankAccountDto>(bankAccountToRepo);
         }
     }
 

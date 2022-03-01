@@ -15,6 +15,7 @@ namespace Data.DataObjects
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         [ForeignKey("Address")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AddressId { get; set; }
         public Address Address { get; set; }
         public Bank Bank { get; set; }
